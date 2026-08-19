@@ -2,8 +2,8 @@
 #define MCP2515_H
 
 #include <stdint.h>
-#include "spi.h"
-#include "core_cm4.h"
+#include "spi/spi.h"
+#include "core/core_cm4.h"
 
 typedef enum
 {

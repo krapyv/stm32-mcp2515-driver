@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "mcp2515.h"
-#include "systick.h"
+#include "systick/systick.h"
 
 extern volatile uint8_t can_int_flag;
 extern volatile uint8_t can_bus_off;

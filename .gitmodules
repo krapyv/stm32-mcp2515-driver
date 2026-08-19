@@ -1,0 +1,9 @@
+[submodule "core"]
+	path = core
+	url = git@github.com:krapyv/stm32f411-core.git
+[submodule "spi"]
+	path = spi
+	url = git@github.com:krapyv/stm32-spi-driver.git
+[submodule "systick"]
+	path = systick
+	url = git@github.com:krapyv/stm32-systick-driver.git

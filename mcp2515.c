@@ -7,22 +7,38 @@ extern volatile uint8_t can_int_flag;
 extern volatile uint8_t can_bus_off;
 extern volatile uint8_t can_intf_stuck;
 
+// Default to NULL
+static mcp2515_irq_callback_t custom_irq_cb = NULL;
+
+// expose a registration function
+void MCP2515_Register_Callback(mcp2515_irq_callback_t cb)
+{
+    custom_irq_cb = cb;
+}
+
 // INT ISR
 void EXTI15_10_IRQHandler(void)
 {
-    // first of all, we need to know which exactly EXTI line caused the ISR to enter
-    // EXTI Line 15 corresponds with EXIT_PR bit 15 set to 1
-
-    if (EXTI->PR & (1 << 15))
+    if (custom_irq_cb != NULL)
     {
-        // clear the bit 15 in EXTI_PR
-        EXTI->PR = (1 << 15); // write-1-to-clear
-        // set the flag to 1
-        // INT line dropped to 0 and caused the interrupt
-        can_int_flag = 1;
+        custom_irq_cb();
     }
+    else
+    {
+        // first of all, we need to know which exactly EXTI line caused the ISR to enter
+        // EXTI Line 15 corresponds with EXIT_PR bit 15 set to 1
 
-    return;
+        if (EXTI->PR & (1 << 15))
+        {
+            // clear the bit 15 in EXTI_PR
+            EXTI->PR = (1 << 15); // write-1-to-clear
+            // set the flag to 1
+            // INT line dropped to 0 and caused the interrupt
+            can_int_flag = 1;
+        }
+
+        return;
+    }
 }
 
 void mcp2515_canintf_handler(uint8_t can_intf_val, uint8_t *rx_buffer0_header, uint8_t *rx_buffer0_payload, uint8_t *rx_buffer0_set, uint8_t *rx_buffer1_header, uint8_t *rx_buffer1_payload, uint8_t *rx_buffer1_set)

@@ -61,6 +61,8 @@ typedef enum
     MCP_RTS_TXB0 = (1 << 0)
 } MCP_RTS_locations_t;
 
+typedef void (*mcp2515_irq_callback_t)(void);
+
 // SPI instruction set
 
 // RESET

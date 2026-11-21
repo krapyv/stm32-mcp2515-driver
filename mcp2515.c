@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "mcp2515.h"
-#include "systick/systick.h"
+#include "osal/osal_time.h"
 
 extern volatile uint8_t can_int_flag;
 extern volatile uint8_t can_bus_off;
@@ -178,7 +178,7 @@ void mcp2515_init()
 void mcp2515_poll_bit_timeout(uint8_t addr, uint8_t mask, uint8_t expected_value, uint32_t timeout_ms, uint8_t *isSuccess)
 {
     uint8_t reg_val;
-    uint32_t start = SysTick_GetTick();
+    uint32_t start = osal_get_ms();
     *isSuccess = 0;
 
     do
@@ -189,7 +189,7 @@ void mcp2515_poll_bit_timeout(uint8_t addr, uint8_t mask, uint8_t expected_value
         {
             *isSuccess = 1;
         }
-    } while (SysTick_GetTick() - start <= timeout_ms && *isSuccess != 1);
+    } while (osal_get_ms() - start <= timeout_ms && *isSuccess != 1);
 
     return;
 }
@@ -205,7 +205,7 @@ void mcp2515_reset()
     spi_transfer(&settings_tx, NULL, NULL, 1, 1, 1);
 
     // the Oscillator Start-up Timer keeps the device in Reset for 128 OSC1 clock cycles after an SPI Reset, and no SPI protocol operations should be attempted until the OST has expired
-    SysTick_Delay_ms(2);
+    osal_delay_ms(2);
 }
 
 void mcp2515_read(uint8_t addr, uint8_t *rx_buffer, uint16_t read_len)

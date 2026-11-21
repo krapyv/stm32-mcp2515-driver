@@ -4,6 +4,6 @@
 [submodule "spi"]
 	path = spi
 	url = git@github.com:krapyv/stm32-spi-driver.git
-[submodule "systick"]
-	path = systick
-	url = git@github.com:krapyv/stm32-systick-driver.git
+[submodule "osal"]
+	path = osal
+	url = git@github.com:krapyv/stm32-freertos-osal.git

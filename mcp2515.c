@@ -334,3 +334,59 @@ void mcp2515_bit_modify(uint8_t addr, uint8_t mask, uint8_t data_byte)
 
     spi_transfer(settings_tx, data_payload, NULL, 4U, 2U, 0U);
 }
+
+MCP_Configure_t mcp2515_configure(uint8_t cnf1, uint8_t cnf2, uint8_t cnf3)
+{
+    mcp2515_reset();
+
+    uint8_t isSuccess;
+
+    // CNF3, CNF2, CNF1
+    uint8_t CNF_vals[3] = {cnf3, cnf2, cnf1};
+
+    // CNF3 = 0x28, CNF2 = 0x29, CNF1 = 0x2A
+    // since all three registers are consecutive, we can write them in one write operation
+    mcp2515_write(CNF3, CNF_vals, 3U);
+
+    uint8_t read_CNF_vals[3];
+
+    mcp2515_read(CNF3, read_CNF_vals, 3U);
+
+    // CNF values comparison
+    for (int i = 0; i < 3; i++)
+    {
+        if (CNF_vals[i] != read_CNF_vals[i])
+        {
+            // first mismatch -> error
+            return MCP_CONFIGURE_ERROR;
+        }
+    }
+
+#if (MCP_INTERRUPT_MODE == MCP_INTERRUPTS_ENABLED)
+    mcp2515_init();
+    // enable interrupts via MCP2515 CANINTE register
+    // bit 5 ERRIE, bit 1 RX1IE, bit 0 RX0IE
+
+    // mask: 0010 0011 = 2^5 + 2^1 + 2^0 = 32 + 2 + 1 = 35 = 0x23
+    // data byte: 0010 0011 = 0x23
+
+    mcp2515_bit_modify(CANINTE, 0x23, 0x23);
+#endif
+    // request Normal mode (bits 7-5: 000)
+
+    // 0b1110 0000 = 0xE0 <- mask, bits 7-5 are requested to change
+    // 0b0000 0000 = 0x00 <- data byte, bits 7-5 are requested to changed to 000
+    mcp2515_bit_modify(CANCTRL1, 0xE0, 0x00);
+
+    // waiting loop for mode to change
+    // mask: 0b1110 0000 = 0xE0 - bits 7-5 are relevant only
+
+    mcp2515_poll_bit_timeout(CANSTAT1, 0xE0, 0x00, 10U, &isSuccess);
+
+    if (!isSuccess)
+    {
+        return MCP_CONFIGURE_ERROR;
+    }
+
+    return MCP_CONFIGURE_OK;
+}

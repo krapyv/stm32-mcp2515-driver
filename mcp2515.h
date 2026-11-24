@@ -5,6 +5,10 @@
 #include "spi/spi.h"
 #include "core/core_cm4.h"
 
+#ifdef USE_APP_CONFIG
+#include "app_config.h"
+#endif
+
 typedef enum
 {
     MCP_CANINTF_RX0IF = (1 << 0),
@@ -60,6 +64,19 @@ typedef enum
     MCP_RTS_TXB1 = (1 << 1),
     MCP_RTS_TXB0 = (1 << 0)
 } MCP_RTS_locations_t;
+
+typedef enum
+{
+    MCP_CONFIGURE_OK = 0,
+    MCP_CONFIGURE_ERROR
+} MCP_Configure_t;
+
+#define MCP_INTERRUPTS_DISABLED 0U
+#define MCP_INTERRUPTS_ENABLED 1U
+
+#ifndef MCP_INTERRUPT_MODE
+#define MCP_INTERRUPT_MODE MCP_INTERRUPTS_DISABLED
+#endif
 
 typedef void (*mcp2515_irq_callback_t)(void);
 

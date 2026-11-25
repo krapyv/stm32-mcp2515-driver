@@ -124,6 +124,7 @@ void mcp2515_rts(MCP_RTS_locations_t *locations, uint8_t locations_len);
 void mcp2515_read_status(uint8_t *rx, uint16_t read_len);
 void mcp2515_rx_status(uint8_t *rx, uint16_t read_len);
 void mcp2515_bit_modify(uint8_t addr, uint8_t mask, uint8_t data_byte);
+MCP_Configure_t mcp2515_configure(uint8_t cnf1, uint8_t cnf2, uint8_t cnf3);
 
 void MCP2515_Register_Callback(mcp2515_irq_callback_t cb);
 

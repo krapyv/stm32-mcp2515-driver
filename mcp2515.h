@@ -110,6 +110,9 @@ static const uint8_t TXB0SIDH = 0x31;
 static const uint8_t TXB0SIDL = 0x32;
 static const uint8_t RXB0SIDH = 0x61;
 static const uint8_t RXB0SIDL = 0x62;
+static const uint8_t TXB0CTRL = 0x30; // 0011 0000 = 2^5 + 2^4 = 32 + 16 = 48 = 0x30
+static const uint8_t TXB1CTRL = 0x40; // 0100 0000 = 2^6 = 64 = 0x40
+static const uint8_t TXB2CTRL = 0x50; // 0101 0000 = 2^6 + 2^4 = 64 + 16 = 80 = 0x50
 
 // function headers
 void mcp2515_init();
